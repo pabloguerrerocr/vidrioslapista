@@ -536,8 +536,8 @@ const onScroll = () => {
 addEventListener("scroll", onScroll, { passive: true }); onScroll();
 document.getElementById("yr").textContent = new Date().getFullYear();
 
-// recorrido en video: la película avanza o retrocede con el scroll. Arranca enseguida leyendo el
-// archivo por partes; en computadora además se baja entero y pasa a memoria para ir más fluido.
+// recorrido en video: la película avanza o retrocede con el scroll. Se lee por partes mientras baja,
+// así arranca en segundos aunque la conexión sea lenta (bajarla entera primero tardaba hasta un minuto).
 (function () {
   const sec = document.getElementById("recorrido"), v = document.getElementById("peli");
   if (!sec || !v) return;
@@ -567,13 +567,6 @@ document.getElementById("yr").textContent = new Date().getFullYear();
   v.addEventListener("loadeddata", () => preparar(() => { listo = true; buscar(); }), { once: true });
   v.preload = "auto";
   v.src = fuente; // si el video no baja, queda la foto de portada
-  if (!movil) {
-    fetch(fuente).then(r => r.ok ? r.blob() : Promise.reject(r.status)).then(b => {
-      listo = false;
-      v.addEventListener("loadeddata", () => preparar(() => { listo = true; buscar(); }), { once: true });
-      v.src = URL.createObjectURL(b);
-    }).catch(() => {});
-  }
   addEventListener("scroll", () => { if (!pendiente) { pendiente = true; requestAnimationFrame(buscar); } }, { passive: true });
   addEventListener("resize", buscar);
 })();
