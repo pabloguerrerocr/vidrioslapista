@@ -536,13 +536,16 @@ const onScroll = () => {
 addEventListener("scroll", onScroll, { passive: true }); onScroll();
 document.getElementById("yr").textContent = new Date().getFullYear();
 
-// recorrido en video: la película se baja entera una vez y avanza o retrocede con el scroll
+// recorrido en video: la película avanza o retrocede con el scroll. Arranca enseguida leyendo el
+// archivo por partes; en computadora además se baja entero y pasa a memoria para ir más fluido.
 (function () {
   const sec = document.getElementById("recorrido"), v = document.getElementById("peli");
   if (!sec || !v) return;
   const movil = matchMedia("(max-width: 760px)").matches;
   if (movil) v.poster = "assets/world/pelicula-movil.jpg";
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const ahorro = navigator.connection && navigator.connection.saveData;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || ahorro) return;
+  const fuente = movil ? "assets/world/pelicula-movil.mp4" : "assets/world/pelicula.mp4";
   let listo = false, objetivo = 0, pendiente = false;
   const progreso = () => {
     const total = sec.offsetHeight - innerHeight;
@@ -551,22 +554,26 @@ document.getElementById("yr").textContent = new Date().getFullYear();
   const buscar = () => {
     pendiente = false;
     if (!listo) return;
+    if (!v.duration) return;
     objetivo = progreso() * Math.max(0, v.duration - 0.05);
     if (!v.seeking && Math.abs(v.currentTime - objetivo) > 0.01) v.currentTime = objetivo;
   };
   v.addEventListener("seeked", () => { if (Math.abs(v.currentTime - objetivo) > 0.01) v.currentTime = objetivo; });
-  const arrancar = () => { listo = true; buscar(); };
-  fetch(movil ? "assets/world/pelicula-movil.mp4" : "assets/world/pelicula.mp4")
-    .then(r => r.ok ? r.blob() : Promise.reject(r.status))
-    .then(b => {
+  // en iPhone hay que darle play una vez para que muestre los cuadros al adelantar
+  const preparar = alTerminar => {
+    const p = v.play();
+    if (p) p.then(() => { v.pause(); alTerminar(); }).catch(alTerminar); else alTerminar();
+  };
+  v.addEventListener("loadeddata", () => preparar(() => { listo = true; buscar(); }), { once: true });
+  v.preload = "auto";
+  v.src = fuente; // si el video no baja, queda la foto de portada
+  if (!movil) {
+    fetch(fuente).then(r => r.ok ? r.blob() : Promise.reject(r.status)).then(b => {
+      listo = false;
+      v.addEventListener("loadeddata", () => preparar(() => { listo = true; buscar(); }), { once: true });
       v.src = URL.createObjectURL(b);
-      v.addEventListener("loadeddata", () => {
-        // en iPhone hay que darle play una vez para que muestre los cuadros al adelantar
-        const p = v.play();
-        if (p) p.then(() => { v.pause(); arrancar(); }).catch(arrancar); else arrancar();
-      }, { once: true });
-    })
-    .catch(() => {}); // si el video no baja, queda la foto de portada
+    }).catch(() => {});
+  }
   addEventListener("scroll", () => { if (!pendiente) { pendiente = true; requestAnimationFrame(buscar); } }, { passive: true });
   addEventListener("resize", buscar);
 })();
