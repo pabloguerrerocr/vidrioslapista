@@ -23,8 +23,12 @@ Spanish and English, and a quote form that opens WhatsApp.*
 
 ## Cómo está hecho
 
-HTML, CSS y JavaScript puros, sin dependencias ni compilación. El video se baja una sola vez y su
-`currentTime` sigue a la posición del scroll, así que avanza y retrocede sin cortes.
+HTML, CSS y JavaScript puros, sin dependencias ni compilación. El video se lee por partes mientras
+baja y su `currentTime` sigue a la posición del scroll, así que avanza y retrocede sin cortes.
+
+Cloudflare Pages entrega los archivos enteros aunque el navegador pida solo un pedazo, y sin eso el
+video no se puede adelantar. Por eso una función corta (`functions/assets/world/[archivo].js`)
+responde con el pedazo pedido; `_routes.json` hace que solo corra para los videos.
 
 ## Verlo en la compu
 
