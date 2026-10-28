@@ -3,7 +3,7 @@
 Página de una vidriera de Pérez Zeledón, Costa Rica: puertas y ventanas de vidrio y aluminio,
 barandales de vidrio templado y puertas de baño, con instalación en todo el país.
 
-**En línea:** https://pabloguerrerocr.github.io/vidrioslapista/
+**En línea:** https://vidrioslapista.pages.dev
 
 *Website for a glass and aluminum installer in southern Costa Rica: scroll-driven video hero,
 Spanish and English, and a quote form that opens WhatsApp.*
