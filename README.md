@@ -17,7 +17,8 @@ Spanish and English, and a quote form that opens WhatsApp.*
   Encima pasan tres capítulos: qué hacen, 25 años de experiencia y barandales.
 - **Galería de 34 trabajos reales** con filtros y visor. Las 13 principales tienen mejora de
   resolución; la cuadrícula usa miniaturas livianas para el celular.
-- **Cotizador** que abre WhatsApp con el mensaje armado, botón de llamar y mapa del taller.
+- **Cotizador** que abre WhatsApp con el mensaje armado, botón de llamar y el mapa con la ficha del
+  negocio en Google Maps.
 - **Español e inglés**: según el idioma del teléfono, el botón EN/ES o `?lang=en` en el enlace.
 - **Para Google y WhatsApp**: datos estructurados de negocio local y vista previa al compartir.
 
